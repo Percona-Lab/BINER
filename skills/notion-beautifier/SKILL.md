@@ -1,7 +1,7 @@
 ---
 name: notion-beautifier
 description: |
-  Create beautifully formatted Notion pages with professional visual hierarchy using callouts, columns, colored headings, toggles, tables, and layered layouts. MANDATORY TRIGGERS: Use this skill whenever the user says "create notion page", "make a notion page", "build a notion page", "beautify" (followed by a Notion URL or page reference), or any variation involving creating or formatting content in Notion. Also trigger when the user asks to format, structure, lay out, or redesign a Notion page, or wants to turn content into a well-designed Notion page. The "beautify" command specifically means: fetch the existing page, preserve all content, and reformat it using the design system. This skill handles the formatting and structure — content instructions come separately from the user.
+  Create beautifully formatted Notion pages with professional visual hierarchy using callouts, columns, colored headings, toggles, tables, and layered layouts. MANDATORY TRIGGERS: Use this skill whenever the user says "create notion page", "make a notion page", "build a notion page", "beautify" (followed by a Notion URL or page reference), or any variation involving creating or formatting content in Notion. Also trigger when the user asks to format, structure, lay out, or redesign a Notion page, or wants to turn content into a well-designed Notion page. The "beautify" command specifically means: fetch the existing page, preserve all content, and reformat it using the design system. Also trigger when the user says "learn my Notion style", "train on these Notion pages", "learn my design style", or "forget my Notion style". Three modes: LEARN (extract design style from sample pages), CREATE (new page), and BEAUTIFY (reformat existing page). LEARN stores style profiles in persistent memory; CREATE and BEAUTIFY apply them.
 ---
 
 # Notion Page Creator
@@ -24,6 +24,50 @@ If this fails, use the reference patterns documented below — they are extracte
 - **Privacy**: Pages are created as **private** (no parent specified) unless the user specifies a location. If the user provides a parent page or database, use that.
 - **Icons**: Always give the page an emoji icon that reflects its topic. Use a relevant emoji, not a generic one.
 - **Title**: Use the user's provided title. Don't add emoji to the title itself — that's what the icon is for.
+
+## Style Profiles
+
+This plugin supports personalized design styles. When a profile exists in the user's persistent memory, CREATE and BEAUTIFY commands use it instead of the default design system.
+
+### "Learn my Notion style" — LEARN mode
+
+When the user wants to train a design profile from sample pages:
+
+1. **Collect page URLs.** The user provides 3-5 Notion page URLs they consider well-designed. Optional: a profile name ("Learn my Notion style as 'technical'"). If no name given, auto-generate one from observed patterns (e.g., "dense-technical", "minimal-clean", "colorful-structured").
+
+2. **Fetch each page.** Use `notion-fetch` for each URL. Read the raw Notion markdown.
+
+3. **Extract design dimensions.** Read `references/design-dimensions.md` for the full list of what to analyze. Key dimensions:
+   - Which of the 12 design patterns appear (callouts, columns, tables, toggles, etc.)
+   - Color palette: which `color="..."` values, frequency, semantic meaning
+   - Callout density and structure (header+content pairs, standalone, stacked layers)
+   - Section header style, column usage, table format, toggle patterns
+   - Visual density, typography, content structure
+   - 2-3 signature moves unique to these pages
+
+4. **Read current memory.** Use `memory_get` to load persistent memory. Find or create the `## NOTION Design Profiles` section.
+
+5. **Save the profile.** Use the schema in `references/profile-schema.md`. Keep profiles to 12-18 lines max. Write the complete updated memory back with `memory_update`.
+
+6. **Confirm.** Show the user what was captured. Offer to refine if anything looks off.
+
+### "Forget my Notion style" — Delete a profile
+
+Remove the named profile (or the only profile) from `## NOTION Design Profiles` in persistent memory. Confirm before deleting.
+
+### Profile-Aware Formatting
+
+Before formatting in CREATE or BEAUTIFY mode:
+1. Read persistent memory. Check for `## NOTION Design Profiles`.
+2. If a profile exists, use it to guide pattern selection:
+   - Apply **Patterns used** in order of preference
+   - Skip **Patterns avoided**
+   - Use the profile's **Color palette** instead of the default color coding
+   - Match the profile's density, structure, and typography preferences
+   - Apply the profile's **Signature moves** where appropriate
+3. If multiple profiles exist, ask the user which to apply (or auto-select if the content type has an obvious match).
+4. If no profile exists, use the default design system below.
+5. **ALWAYS enforce Common Mistakes rules** regardless of profile — no nested callouts, no callouts in columns, no code in toggles.
 
 ## The Design System
 
@@ -280,19 +324,21 @@ Choose the template that best fits the user's content, then adapt as needed.
 ## Commands
 
 ### "Create notion page" — Build a new page from scratch
-1. **Read the user's content instructions** — they'll tell you what the page is about.
-2. **Pick the closest template** from the Page Type Templates section and adapt it.
-3. **Use `notion-create-pages`** to create the page. Set no parent (private) unless told otherwise.
-4. **Apply the design system consistently** — every section should use the callout patterns, not bare markdown headings.
-5. **Don't over-format** — if a section is short, a simple callout is fine. The patterns above are tools, not mandates. A page with 3 well-chosen patterns beats one that uses all 12 for no reason.
+1. **Check for a style profile** — read persistent memory for `## NOTION Design Profiles`. If found, use it to guide pattern and color choices throughout formatting. If not, use the default design system.
+2. **Read the user's content instructions** — they'll tell you what the page is about.
+3. **Pick the closest template** from the Page Type Templates section and adapt it.
+4. **Use `notion-create-pages`** to create the page. Set no parent (private) unless told otherwise.
+5. **Apply the design system consistently** — every section should use the callout patterns, not bare markdown headings. If a style profile is loaded, prefer the user's patterns and colors over the defaults.
+6. **Don't over-format** — if a section is short, a simple callout is fine. The patterns above are tools, not mandates. A page with 3 well-chosen patterns beats one that uses all 12 for no reason.
 
 ### "Beautify" — Reformat an existing Notion page
 When the user says "beautify" followed by a Notion URL or page reference:
-1. **Fetch the page** using `notion-fetch` to get the current content.
-2. **Preserve all content exactly** — don't add, remove, or rewrite any text, code, or data. This is a formatting operation, not an editing one.
-3. **Apply the design system** — restructure the page using callout patterns, colored section headers, tables in gray callouts, columns where parallel content exists, and the full visual hierarchy.
-4. **Use `notion-update-page` with `replace_content`** to apply the new formatting.
-5. **Understand the content type** — an architecture doc with code should show code inline (not hidden in toggles). A strategy doc should use pillars and columns. Match the formatting to what the content actually is.
+1. **Check for a style profile** — read persistent memory for `## NOTION Design Profiles`. If found, use it to guide formatting decisions. If not, use the default design system.
+2. **Fetch the page** using `notion-fetch` to get the current content.
+3. **Preserve all content exactly** — don't add, remove, or rewrite any text, code, or data. This is a formatting operation, not an editing one.
+4. **Apply the design system** — restructure the page using callout patterns, colored section headers, tables in gray callouts, columns where parallel content exists, and the full visual hierarchy. If a style profile is loaded, apply the user's preferred patterns, colors, and signature moves.
+5. **Use `notion-update-page` with `replace_content`** to apply the new formatting.
+6. **Understand the content type** — an architecture doc with code should show code inline (not hidden in toggles). A strategy doc should use pillars and columns. Match the formatting to what the content actually is.
 
 ## Common Mistakes to Avoid
 

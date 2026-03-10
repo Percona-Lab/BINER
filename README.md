@@ -6,12 +6,14 @@ An opinionated formatter for Notion pages. Like Prettier, but for Notion.
 
 notion-beautifier is a plugin for Claude that transforms plain Notion pages into professionally structured documents. It applies a consistent design system — colored section headers, structured layouts, tables, columns — so your pages look polished without manual formatting.
 
-**Two commands:**
+**Four commands:**
 
 | Command | What it does |
 |---------|-------------|
 | **"Create notion page"** | Builds a new page from scratch with the design system applied |
 | **"Beautify"** + a Notion URL | Reformats an existing page — preserves all your content, just makes it look great |
+| **"Learn my Notion style"** + page URLs | Extracts your design preferences from sample pages and saves them |
+| **"Forget my Notion style"** | Removes a saved design profile |
 
 ## Getting Started
 
@@ -57,7 +59,10 @@ notion-beautifier/
 │   └── plugin.json          # Plugin metadata (name, version, author)
 ├── skills/
 │   └── notion-beautifier/
-│       └── SKILL.md          # Formatting rules and design system
+│       ├── SKILL.md          # Formatting rules and design system
+│       └── references/
+│           ├── design-dimensions.md  # What to extract during LEARN mode
+│           └── profile-schema.md     # Memory storage format for profiles
 ├── README.md
 └── LICENSE
 ```
@@ -73,6 +78,22 @@ Create notion page: Your Notion Page
 ```
 Beautify https://www.notion.so/your-workspace/Your-Page-abc123
 ```
+
+## Personalized Styles
+
+The plugin can learn your design preferences from existing Notion pages you love — similar to how [MYNAH](https://github.com/Percona-Lab/MYNAH) learns your writing voice.
+
+```
+Learn my Notion style from these pages: [URL1] [URL2] [URL3]
+```
+
+Optionally name the profile:
+
+```
+Learn my Notion style as "technical" from these pages: [URL1] [URL2] [URL3]
+```
+
+Once learned, all future Create and Beautify commands automatically apply your preferred patterns, colors, and formatting choices. Profiles are stored in your persistent memory ([PACK](https://github.com/Percona-Lab/PACK) or equivalent) — not in the plugin itself. The default design system still applies if no profile exists.
 
 ## What it formats
 
