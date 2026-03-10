@@ -105,46 +105,60 @@ Inside callouts, use blockquotes with blue backgrounds to highlight the core obj
 
 ### 6. Columns for Side-by-Side Content
 
-Use columns when you have parallel content — pillars, comparisons, paired sections (like Security + Next Steps, or Notes + To-Do):
+Use columns when you have parallel content — pillars, comparisons, paired sections (like Security + Next Steps, or Notes + To-Do).
+
+**CRITICAL: Do NOT put callout blocks inside columns.** Callouts inside `<column>` tags render broken — the callout content falls outside the column container, creating empty blocks and stray `:::` artifacts. Instead, use plain content (bold text, bullets, paragraphs) directly inside columns:
 
 ```markdown
 <columns>
 	<column>
-		::: callout {color="yellow_bg"}
-			## **Left Section**
-			Content here...
-		:::
+		## **Left Section**
+		Content here...
 	</column>
 	<column>
-		::: callout {color="green_bg"}
-			## **Right Section**
-			Content here...
-		:::
+		## **Right Section**
+		Content here...
 	</column>
 </columns>
+```
+
+If you need colored side-by-side sections, place the columns INSIDE a callout (not the other way around):
+```markdown
+::: callout {color="gray_bg"}
+	<columns>
+		<column>
+			**Left Section**
+			Content here...
+		</column>
+		<column>
+			**Right Section**
+			Content here...
+		</column>
+	</columns>
+:::
 ```
 
 Two columns is the sweet spot. Three works for brief items. Don't exceed three.
 
 ### 7. Architecture/Layer Callouts
 
-When showing layers, phases, or stacked concepts, use nested colored callouts to create a visual stack:
+When showing layers, phases, or stacked concepts, use sequential flat callouts to create a visual stack. **Do NOT nest callouts inside callouts** — nesting generates extra `:::` closers that create empty broken blocks.
 
 ```markdown
-::: callout
-	## **Architecture**
-	::: callout {color="yellow_bg"}
-		**Layer 1** - Description of first layer.
-	:::
-	::: callout {color="green_bg"}
-		**Layer 2** - Description of second layer.
-	:::
-	::: callout {color="purple_bg"}
-		**Layer 3** - Description of third layer.
-	:::
-	::: callout {color="red_bg"}
-		**Layer 4** - Description of fourth layer.
-	:::
+::: callout {color="red_bg"}
+	### **Architecture**
+:::
+::: callout {color="yellow_bg"}
+	**Layer 1** - Description of first layer.
+:::
+::: callout {color="green_bg"}
+	**Layer 2** - Description of second layer.
+:::
+::: callout {color="purple_bg"}
+	**Layer 3** - Description of third layer.
+:::
+::: callout {color="red_bg"}
+	**Layer 4** - Description of fourth layer.
 :::
 ```
 
@@ -219,20 +233,13 @@ For phased plans or numbered steps, use background-colored labels inline:
 
 ### 12. Bottom Navigation / Link Blocks
 
-For linking to related pages, use small colored callouts in columns:
+For linking to related pages, use colored callouts sequentially (do NOT put callouts inside columns):
 ```markdown
-<columns>
-	<column>
-		::: callout {color="red_bg"}
-			<page url="https://...">Key Evidence</page>
-		:::
-	</column>
-	<column>
-		::: callout {color="green_bg"}
-			<page url="https://...">Strategic Plan</page>
-		:::
-	</column>
-</columns>
+::: callout {color="blue_bg"}
+	**Quick Links**
+	- <page url="https://...">Key Evidence</page>
+	- <page url="https://...">Strategic Plan</page>
+:::
 ```
 
 ## Page Type Templates
@@ -241,10 +248,10 @@ Choose the template that best fits the user's content, then adapt as needed.
 
 ### Vision / Strategy Document
 1. Intro callout (owner, purpose)
-2. Two-column layout for core pillars (blue_bg + purple_bg callout headers)
+2. Colored callout headers for each pillar (blue_bg, purple_bg)
 3. Balance/synthesis callout (yellow_bg header)
 4. Summary callout (blue_bg header with icon)
-5. Link blocks at bottom
+5. Quick links callout at bottom
 
 ### Proposal Document
 1. Title heading + gray subtitle
@@ -266,9 +273,9 @@ Choose the template that best fits the user's content, then adapt as needed.
 2. Goal callout with blue blockquote
 3. Principles callout with emoji bullets
 4. Gray callout wrapping a reference table
-5. Architecture section with layered colored callouts
-6. Scope/privacy controls as nested callouts per platform
-7. Two-column footer: Security + Next Steps
+5. Architecture section with sequential flat colored callouts (no nesting)
+6. Scope/privacy controls as sequential callouts per platform
+7. Footer: Security + Next Steps as sequential callouts
 
 ## Commands
 
@@ -289,10 +296,11 @@ When the user says "beautify" followed by a Notion URL or page reference:
 
 ## Common Mistakes to Avoid
 
+- **NEVER nest callouts inside callouts**: This is the #1 rendering bug. Nested callouts generate extra `:::` closers that create empty broken blocks. Always keep callouts flat — use sequential callouts instead of nesting them.
+- **NEVER put callouts inside `<column>` tags**: Callouts inside columns render broken — the callout content falls outside the column, creating empty blocks and `:::::: columns` artifacts. Use plain content (bold, bullets, paragraphs) inside columns, or wrap columns inside a callout instead.
 - **Bare headings without callouts**: Plain `## Heading` looks weak in Notion. Wrap sections in callouts or use colored heading backgrounds.
-- **Too many nested levels**: One level of nesting (callout inside callout) is great. Two levels is the max. Beyond that, restructure.
 - **Inconsistent colors**: Pick 3-4 colors per page and use them consistently. Don't rainbow every section.
 - **Forgetting the intro callout**: Every page needs one. It's the first thing readers see.
-- **Giant walls of text in callouts**: Break up long content with sub-callouts, toggles, or columns.
+- **Giant walls of text in callouts**: Break up long content with toggles, tables, or columns.
 - **NEVER put code blocks inside `<details>` toggles**: Notion strips code from inside `<details><summary>` blocks — the toggle renders but the code disappears. Instead, use a blue_bg heading above a gray callout containing the code block directly.
 - **Don't hide important content in toggles**: Toggles are useful for truly supplementary info, but if the content is the point of the page (like code in an architecture doc), show it inline.
