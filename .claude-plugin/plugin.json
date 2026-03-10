@@ -1,0 +1,8 @@
+{
+  "name": "notion-beautifier",
+  "version": "1.0.0",
+  "author": "Percona Lab",
+  "description": "Professional page formatting for Notion — like Prettier, but for Notion. Applies a consistent design system with colored section headers, structured layouts, tables, and columns.",
+  "repository": "https://github.com/Percona-Lab/notion-beautifier",
+  "license": "MIT"
+}

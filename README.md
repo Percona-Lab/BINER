@@ -4,7 +4,7 @@ An opinionated formatter for Notion pages. Like Prettier, but for Notion.
 
 ## What it does
 
-notion-beautifier is a skill for Claude that transforms plain Notion pages into professionally structured documents. It applies a consistent design system — colored section headers, structured layouts, tables, columns — so your pages look polished without manual formatting.
+notion-beautifier is a plugin for Claude that transforms plain Notion pages into professionally structured documents. It applies a consistent design system — colored section headers, structured layouts, tables, columns — so your pages look polished without manual formatting.
 
 **Two commands:**
 
@@ -22,32 +22,45 @@ notion-beautifier is a skill for Claude that transforms plain Notion pages into 
 
 ### How to install
 
-#### One-liner (Claude Code)
+#### One-liner (Claude Code or Cowork)
 
-Open Claude Code and prompt:
+Open Claude and prompt:
 
 ```
-Install this skill: https://github.com/Percona-Lab/notion-beautifier
+Install this plugin: https://github.com/Percona-Lab/notion-beautifier
 ```
 
-Claude will clone the repo, copy the skill files to `~/.claude/skills/notion-beautifier/`, and clean up. Done.
+Claude will clone the repo, install the plugin to `~/.claude/plugins/notion-beautifier/`, and clean up. Done.
 
 #### Manual
 
 1. Clone or download this repo
-2. Copy `SKILL.md` into `~/.claude/skills/notion-beautifier/`
-3. Restart Claude (or reload skills)
+2. Copy the contents into `~/.claude/plugins/notion-beautifier/`
+3. Restart Claude (or reload plugins)
 
 ```bash
-mkdir -p ~/.claude/skills/notion-beautifier
+mkdir -p ~/.claude/plugins/notion-beautifier
 git clone https://github.com/Percona-Lab/notion-beautifier.git /tmp/notion-beautifier
-cp /tmp/notion-beautifier/SKILL.md ~/.claude/skills/notion-beautifier/
+cp -r /tmp/notion-beautifier/.claude-plugin /tmp/notion-beautifier/skills ~/.claude/plugins/notion-beautifier/
 rm -rf /tmp/notion-beautifier
 ```
 
 ### Verify it's installed
 
-In Claude Code, run `/skills` — you should see `notion-beautifier` in the list. In Cowork, the skill will appear automatically when you start a new session.
+In Claude Code, run `/plugins` — you should see `notion-beautifier` in the list. In Cowork, the plugin will appear automatically when you start a new session.
+
+## Plugin Structure
+
+```
+notion-beautifier/
+├── .claude-plugin/
+│   └── plugin.json          # Plugin metadata (name, version, author)
+├── skills/
+│   └── notion-beautifier/
+│       └── SKILL.md          # Formatting rules and design system
+├── README.md
+└── LICENSE
+```
 
 ## Usage
 
@@ -63,7 +76,7 @@ Beautify https://www.notion.so/your-workspace/Your-Page-abc123
 
 ## What it formats
 
-The skill works with any type of Notion page:
+The plugin works with any type of Notion page:
 
 - **Vision / Strategy docs** — Two-column pillars, synthesis sections, summary callouts
 - **Proposals** — Colored section headers, phased plans, comparison tables
@@ -73,7 +86,7 @@ The skill works with any type of Notion page:
 
 ## Design System
 
-The skill applies a consistent color language:
+The plugin applies a consistent color language:
 
 | Color | Meaning |
 |-------|---------|
@@ -88,7 +101,7 @@ The skill applies a consistent color language:
 ## Known Limitations
 
 - **Full width:** The Notion API doesn't support setting pages to full width — toggle it manually after creation.
-- **Toggle + code:** Notion's toggle blocks can't contain code blocks (the code gets stripped). The skill works around this with styled headings and callouts instead.
+- **Toggle + code:** Notion's toggle blocks can't contain code blocks (the code gets stripped). The plugin works around this with styled headings and callouts instead.
 - **Privacy:** Pages are created as private by default. Tell Claude where to put the page if you want it somewhere specific.
 
 ## License
