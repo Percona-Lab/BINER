@@ -4,7 +4,7 @@
 
 An opinionated formatter for Notion pages. Like Prettier, but for Notion.
 
-> **Why "BINER"?** In climbing, a *biner* (short for carabiner) is the essential link that connects everything on the wall — rope to harness, protection to anchor, climber to safety. BINER does the same for your Notion pages: it's the link between raw content and polished, professional structure. Part of the [Alpine toolkit](https://github.com/Percona-Lab) alongside [PACK](https://github.com/Percona-Lab/DK-PACK), [MYNAH](https://github.com/Percona-Lab/MYNAH), [IBEX](https://github.com/Percona-Lab/IBEX), and [SHERPA](https://github.com/Percona-Lab/SHERPA).
+> **Why "BINER"?** In climbing, a *biner* (short for carabiner) is the essential link that connects everything on the wall — rope to harness, protection to anchor, climber to safety. BINER does the same for your Notion pages: it's the link between raw content and polished, professional structure. Part of the [Alpine toolkit](https://github.com/Percona-Lab) alongside [PACK](https://github.com/Percona-Lab/PACK), [MYNAH](https://github.com/Percona-Lab/MYNAH), [IBEX](https://github.com/Percona-Lab/IBEX), and [SHERPA](https://github.com/Percona-Lab/SHERPA).
 
 ## What it does
 
@@ -105,7 +105,31 @@ Optionally name the profile:
 Learn my Notion style as "technical" from these pages: [URL1] [URL2] [URL3]
 ```
 
-Once learned, all future Create and Beautify commands automatically apply your preferred patterns, colors, and formatting choices. Profiles are stored in your persistent memory ([PACK](https://github.com/Percona-Lab/DK-PACK) or equivalent) — not in the plugin itself. The default design system still applies if no profile exists.
+Once learned, all future Create and Beautify commands automatically apply your preferred patterns, colors, and formatting choices. Profiles are stored in your persistent memory ([PACK](https://github.com/Percona-Lab/PACK) or equivalent), not in the plugin itself. The default design system still applies if no profile exists.
+
+## Why use PACK?
+
+BINER works out of the box using Claude's built-in memory, but installing
+[PACK](https://github.com/Percona-Lab/PACK) unlocks the full experience:
+
+- **Train once, use everywhere.** Train your design profiles in Cowork or
+  Claude Code, then use them in Claude Desktop, Cursor, Open WebUI, and any
+  other MCP client connected to PACK. No plugin needed on the other end.
+- **Any Claude interface can use your profiles.** PACK is an MCP server, so
+  even a plain Claude Desktop chat can read your Notion design preferences and
+  apply them when formatting pages. Without PACK, profiles are only available
+  inside the platform where you trained them.
+- **Cross-project.** Claude's built-in memory is scoped per project directory.
+  PACK memory is global, so your design preferences are available no matter
+  which repo you're working in.
+- **Version controlled.** PACK backs memory to a private GitHub repo. Full git
+  history of every profile change, and you can clone it anywhere.
+- **Shared context.** Other Alpine toolkit tools (like MYNAH) can read the same
+  memory, enabling a connected workflow across tools.
+
+Without PACK, BINER stores profiles in Claude's built-in memory. This works
+for single-platform, single-project use, but profiles won't sync across
+platforms or be accessible to other tools.
 
 ## What it formats
 
